@@ -1,0 +1,221 @@
+---
+title: "Neutral Model Demo"
+author: "John Quensen"
+date: "December 5, 2019"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Null Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+This package contains only two user functions. The function `neutral_model` enables plotting the occurrence of OTUs in a target community versus their relative abundances in a source community as is done in Morris *et al.* (2013); the function also provides some statistics. Required inputs are matrices for the two communities with samples in rows and OTUs in columns. (There are multiple samples from each community.)  All OTUs must be included in the same order in the two community matrices, and all OTUs should occur in at least one sample from at least one community. There should be approximately the same number of OTUs in each sample. If a `phyloseq` (McMurdie and Holmes, 2013) object with a `tax_table` and samples and OTUs for only the source and target communities is provided, then taxonomic assignments may be added to `neutral_model`'s output. The function returns an S3 object of class NCM with print, summary, and plot functions.
+
+The included helper function `veganotu` simplifies creation of the required input matrices from a `phyloseq` object meeting said requirements.
+
+Two example data sets are provided as `phyloseq` objects. The first, `schmidt` (from Venkataraman *et al.*, 2015), is complied from 16S rRNA DNA sequence counts and contains only samples for source (Mouth) and target (Lung) communities, no empty OTUs, and a `tax_table` giving classification by 6 ranks. Thus it is ready for analysis without the need for any sub-setting of samples or OTUs. The data set `rplb` is compiled from `rplB` gene counts and contains samples from three treatments. It is provided to demonstrate how to perform the necessary sub-setting of samples and OTUs. For further explanation of the sub-setting functions, see the vignette `phyloseq-basics` and documentation for the individual functions included in the `phyloseq` package available from Bioconductor (Gentleman *et al.*, 2004).
+
+# Analyze schmidt data
+
+Begin by loading necessary packages and the example data.  
+
+```{r}
+library(phyloseq)
+library(vegan)
+library(Hmisc)
+library(NeutralModel)
+data(schmidt)
+```
+
+The example data `schmidt` is provided as a `phyloseq` object containing 16S rRNA DNA sequence data for 85 samples; 56 are from the mouth and 29 are from the lung. There are 500 sequences for each sample, and 475 OTUs total classified into 6 ranks. We can confirm these facts thus:  
+
+```{r}
+schmidt
+range(sample_sums(schmidt))
+table(sample_data(schmidt)[,1])
+rank_names(schmidt)
+```
+
+Check if there are any empty OTUs:  
+
+```{r}
+sum(taxa_sums(schmidt)==0)
+```
+
+We wish to perform a neutral model analysis with the mouth as the source community and the lung as the target community. Our example data meet the requirements for this type of analysis:  
+
+  * The samples in `schmidt` are for only the source and target communities.
+  * There are multiple samples for each community.
+  * All samples have the same number of sequences.
+  * There are no empty OTUs (taxa).
+
+The first step is to make separate OTU tables for source and target communities. The function `veganotu` included in this package simplifies this task. The variable `Site` in the sample data table in `schmidt` specifies which samples are in each community.  
+
+```{r}
+source.com <- veganotu(subset_samples(schmidt, Site=="Mouth"))
+target.com <- veganotu(subset_samples(schmidt, Site=="Lung"))
+```
+ 
+*Do not remove empty OTUs after sub-setting!**
+
+To run the neutral model analysis:  
+
+```{r}
+test <- neutral_model(physeq=schmidt, source.otu=source.com,
+                      target.otu=target.com, add_taxa=TRUE)
+```
+
+Since `schmidt` includes taxonomic assignments (a `tax_table`), we added taxonomy to the output with the argument `add_taxa=TRUE`.  
+
+Warnings may be issued if confidence intervals about the plot curve are not fitted with full precision, and/or if there are ties in calculating the correlation between observed and fitted values. These are usually of no consequence. Serious problems will be evident when plotting the result.  
+
+The arguments need not be named if they are given in order.  For example, the following would also work:  
+
+```{r, eval=FALSE}
+test <- neutral_model(schmidt, source.com, target.com, add_taxa=TRUE)
+```
+
+As long as the target and source matrices meet requirements, you do not need to include a `phyloseq` object, but in that case it is not possible to add taxonomy to the output.  For example, this would also work:  
+
+```{r, eval=FALSE}
+test <- neutral_model(NULL, source.com, target.com)
+```
+
+The results can be plotted thus:
+
+```{r}
+plot(test)
+```
+
+The solid line is the predicted relationship between source abundance and target frequency. The dashed lines give the 95% confidence interval. The gray symbols represent OTUs falling within the confidence interval - i.e. those that are neutrally distributed. The green symbols represent OTUs that occur in the target community more frequently than expected (are selected for). The red symbols represent OTUs that occur in the target community less frequently than expected (are selected against).  
+
+The plot function accepts several arguments common to R's plot function (main, xlim, ylim, xlab, ylab) allowing some customization of the plot. For example:  
+
+```{r}
+plot(test, xlab="Relative Abundance in Mouth", ylab="Detected Frequency in Lung",
+     main="My NCM Plot")
+```
+
+By entering the name of the NCM object,  
+```{r}
+test
+```
+
+we get `Ntm`, the parameter fitted to the model. The math for the model requires that all samples have at least approximately the same number of sequences. In this case, all samples have 500 sequences, and `Nt` = 500. This makes `m` = 0.0465, the probability that when an individual in a sample in the target community dies it is replaced by an individual from the source community. At least this is the interpretation given in the context of island bio-geography for which the neutral community model was originally developed, i.e. for counts of trees or birds on islands. It is, however, rather meaningless for sequence data.  
+
+The null hypothesis that the model does not fit the data can be tested with the function `pval_NeutralModel` which calculates a `p` value by permutation, thus:  
+
+```{r}
+p.val <- pval_NeutralModel(test)
+p.val
+```
+
+The null hypothesis is rejected if `p.val` is less than a limit set by the investigator, typically 0.05. By default, a plot is made of the distribution of the test statistic with the location of the observed statistic denoted by a vertical red line.  
+
+Other statistics may be retrieved with the summary function:  
+
+```{r}
+summary(test)
+```
+
+The object `test` is a list of 8 items. You may examine the structure of `test` with the `str` function. Statistics on the OTUs that are neutral, selected for, and selected against can be accessed by entering `test\$neutral_matrix, test\$for_matrix`, and `test\$against_matrix`, respectively. These can be sub-set as any R data frame, so if we want the classification of the OTUs selected for, we can enter:  
+
+```{r}
+test$for_matrix[,8:12]
+```
+
+The column indices are dependent on the number of taxonomic ranks present, but will always begin with column 7. Ranks can also be selected by name as in the following command:  
+
+```{r}
+test$for_matrix[ , c("Phylum", "Genus")]
+```
+
+# Analyze rplB Data
+
+The data set `rplb` is from an experiment with IPAA patients and is also furnished as a `phyloseq` object.  IPAA (ileal pouch-anal anastomosis) is a surgical procedure in which a pouch is formed from the distal portion of the ileum to restore function in colectomy patients. Some IPAA patients developed pouchitis at some time point post surgery. Other patients remained healthy throughout the time course of the experiment. Colon samples from healthy patients were also included, and could conceivably be a source community for the pouchitis patients.  
+
+Prior to fitting to a neutral model, the data obviously needs to be sub-set in some meaningful manner to include only source and target communities. Let us consider the colon samples as the source community and the samples from IPAA  patients who developed pouchitis as the target community. Because the disease state may also have an effect, we will remove samples post diagnosis with pouchitis. Begin by examining the variables in the sample data table and their values.  
+
+```{r}
+data(rplb)
+sample_variables(rplb)
+unique(sample_data(rplb)[,"Diagnosed"])
+unique(sample_data(rplb)[,"Group"])
+```
+
+Remove samples post diagnosis.  
+
+```{r}
+temp <- subset_samples(rplb, Diagnosed=="No")
+```
+
+Remove samples for patients that did not develop pouchitis.  
+
+```{r}
+temp <- subset_samples(temp, Group!="IPAA.Healthy")
+table(sample_data(temp)[,"Site"])
+```
+
+We are left with 45 samples from the colon of healthy patients and 16 samples from IPAA patients that developed pouchitis.  
+
+The neutral model math is based on sample sizes being at least close to equal.  If a there are few samples with low abundances, they can be removed from the analysis. Another option is to sub-sample to equal numbers. We might also consider removing rare OTUs, or at least universal singletons. For this example, we will remove OTUs with fewer than 10 reads.  
+
+```{r}
+temp <- prune_taxa(taxa_sums(temp)>9, temp)
+range(sample_sums(temp))
+```
+
+Sample sizes are close enough that sub-sampling is not necessary, but to demonstrate:  
+
+```{r}
+set.seed(123) # To make reproducible.
+temp <- rarefy_even_depth(temp, rngseed=TRUE)
+range(sample_sums(temp))
+```
+
+Our data are now sub-set. The last step before running the `neutral_model` function is to create separate OTU tables for the source and target communities. **Do not remove empty OTUs after sub-setting!**    
+
+```{r}
+source.com <- veganotu(subset_samples(temp, Site=="Colon"))
+target.com <- veganotu(subset_samples(temp, Site=="IPAA"))
+```
+
+Run the `neutral_model` function.  
+
+```{r}
+rslt <- neutral_model(temp, source.com, target.com)
+rslt
+summary(rslt)
+```
+
+Plot the results:  
+
+```{r}
+plot(rslt, main="rplB Counts", xlab="Relative Abundance in Colon",
+     ylab="Detection Frequency in Pouch")
+```
+
+And calculate a `p` value:  
+
+```{r}
+p.val <- pval_NeutralModel(rslt, n.iter=999, plot=FALSE)
+p.val
+```
+
+# References`
+
+**Gentleman R.C., Carey V.J., Bates D.M., Bolstad B., Dettling M., Dudoit S., Ellis B., Gautier L., Ge Y., Gentry J., Hornik K., Hothorn T., Huber W., Iacus S., Irizarry R., Leisch F., Li C., Maechler M., Rossini A.J., Sawitzki G., Smith C., Smyth G., Tierney L., Yang J.Y. and Zhang J.** (2004) Bioconductor: open software development for computational biology and bioinformatics. Genome Biol. 5(10): R80.
+
+**McMurdie, P. J. and S. Holmes.** (2013) phyloseq: An R package for reproducible interactive analysis and graphics of microbiome census data. PLos One 8(4)e61217. http://dx.plos.org/10.1371/journal.pone.0061217
+
+**Morris, A., J. M. Beck, P. D. Schloss, T. B. Campbell, K. Crothers, J. L. Curtis, S. C. Flores, A. P. Fontenot, E. Ghedin, L. Huang, K. Jablonski, E. Kleerup, S. V. Lynch, E. Sodergren, H. Twigg, V. B. Young, C. M. Bassis, A. Venkataraman, T. M. Schmidt, G. M. Weinstock, and H. I. V. M. P. Lung.** (2013) Comparison of the respiratory microbiome in healthy nonsmokers and smokers. American Journal of Respiratory and Critical Care Medicine 187:1067-1075.
+
+**Venkataraman, A., C. M. Bassis, J. M. Beck, V. B. Young, J. L. Curtis, G. B. Huffnagle, and T. M. Schmidt.** 2015. Application of a neutral community model to assess structuring of the human lung microbiome. MBio 6:e02284-14.
+
+

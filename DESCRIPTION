@@ -1,0 +1,21 @@
+Package: NeutralModel
+Title: Fits source and target abundance data to a neutral community model
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "John",
+           family = "Quensen",
+           role = c("aut", "cre"),
+           email = "quensenj@msu.edu",
+           comment = c(ORCID = "0000-0002-7669-1595"))
+Description: Given multiple samples from putative source and target communities, fits observed
+  frequency of OTUs in the target community to their relative abundances in the source community 
+  using Sloan's adaptation of Hubbell's Unified Neutral Theory of Biogeography.
+Depends: phyloseq, vegan, Hmisc
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests:
+  knitr,
+  rmarkdown
+VignetteBuilder: knitr
