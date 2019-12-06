@@ -2,6 +2,7 @@
 #'
 #' Plots an NCM object.
 #'
+#' @aliases plot plot.NCM
 #' @method plot NCM
 #' @usage plot(x, xlab = "Relative Abundance in Source",
 #'   ylab = "Det.Freq. in Target", main = NULL,

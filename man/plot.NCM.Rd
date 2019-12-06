@@ -2,6 +2,7 @@
 % Please edit documentation in R/plot.NCM.R
 \name{plot.NCM}
 \alias{plot.NCM}
+\alias{plot}
 \title{Plot method for class NCM}
 \usage{
 plot(x, xlab = "Relative Abundance in Source",

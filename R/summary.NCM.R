@@ -2,6 +2,7 @@
 #'
 #' Prints a summary for an NCM class object.
 #'
+#'
 #' @param object Output of the function neutral_model.
 #' @param ... Other parameters passed to the generic print function.
 #'
