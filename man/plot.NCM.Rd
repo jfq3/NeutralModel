@@ -5,7 +5,7 @@
 \alias{plot}
 \title{Plot method for class NCM}
 \usage{
-plot(x, xlab = "Relative Abundance in Source",
+plot.NCM(x, xlab = "Relative Abundance in Source",
   ylab = "Det.Freq. in Target", main = NULL,
   xlim = c(0.001, 100), ylim = c(0, 100), ...,
   symb.col = c("darkgrey", "indianred", "darkgreen"))
