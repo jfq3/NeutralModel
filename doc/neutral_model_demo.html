@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="John Quensen" />
+
+
+<title>Neutral Model Demo</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Neutral Model Demo</h1>
+<h4 class="author">John Quensen</h4>
+<h4 class="date">December 5, 2019</h4>
+
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This package contains only two user functions. The function <code>neutral_model</code> enables plotting the occurrence of OTUs in a target community versus their relative abundances in a source community as is done in Morris <em>et al.</em> (2013); the function also provides some statistics. Required inputs are matrices for the two communities with samples in rows and OTUs in columns. (There are multiple samples from each community.) All OTUs must be included in the same order in the two community matrices, and all OTUs should occur in at least one sample from at least one community. There should be approximately the same number of OTUs in each sample. If a <code>phyloseq</code> (McMurdie and Holmes, 2013) object with a <code>tax_table</code> and samples and OTUs for only the source and target communities is provided, then taxonomic assignments may be added to <code>neutral_model</code>’s output. The function returns an S3 object of class NCM with print, summary, and plot functions.</p>
+<p>The included helper function <code>veganotu</code> simplifies creation of the required input matrices from a <code>phyloseq</code> object meeting said requirements.</p>
+<p>Two example data sets are provided as <code>phyloseq</code> objects. The first, <code>schmidt</code> (from Venkataraman <em>et al.</em>, 2015), is complied from 16S rRNA DNA sequence counts and contains only samples for source (Mouth) and target (Lung) communities, no empty OTUs, and a <code>tax_table</code> giving classification by 6 ranks. Thus it is ready for analysis without the need for any sub-setting of samples or OTUs. The data set <code>rplb</code> is compiled from <code>rplB</code> gene counts and contains samples from three treatments. It is provided to demonstrate how to perform the necessary sub-setting of samples and OTUs. For further explanation of the sub-setting functions, see the vignette <code>phyloseq-basics</code> and documentation for the individual functions included in the <code>phyloseq</code> package available from Bioconductor (Gentleman <em>et al.</em>, 2004).</p>
+</div>
+<div id="analyze-schmidt-data" class="section level1">
+<h1>Analyze schmidt data</h1>
+<p>Begin by loading necessary packages and the example data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(phyloseq)
+<span class="kw">library</span>(vegan)</code></pre></div>
+<pre><code>## Loading required package: permute</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## This is vegan 2.5-6</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(Hmisc)</code></pre></div>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## Loading required package: Formula</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
+<pre><code>## 
+## Attaching package: 'Hmisc'</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     format.pval, units</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(NeutralModel)
+<span class="kw">data</span>(schmidt)</code></pre></div>
+<p>The example data <code>schmidt</code> is provided as a <code>phyloseq</code> object containing 16S rRNA DNA sequence data for 85 samples; 56 are from the mouth and 29 are from the lung. There are 500 sequences for each sample, and 475 OTUs total classified into 6 ranks. We can confirm these facts thus:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">schmidt</code></pre></div>
+<pre><code>## phyloseq-class experiment-level object
+## otu_table()   OTU Table:         [ 475 taxa and 85 samples ]
+## sample_data() Sample Data:       [ 85 samples by 1 sample variables ]
+## tax_table()   Taxonomy Table:    [ 475 taxa by 6 taxonomic ranks ]</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">range</span>(<span class="kw">sample_sums</span>(schmidt))</code></pre></div>
+<pre><code>## [1] 500 500</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(<span class="kw">sample_data</span>(schmidt)[,<span class="dv">1</span>])</code></pre></div>
+<pre><code>## 
+##  Lung Mouth 
+##    29    56</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rank_names</span>(schmidt)</code></pre></div>
+<pre><code>## [1] &quot;Domain&quot; &quot;Phylum&quot; &quot;Class&quot;  &quot;Order&quot;  &quot;Family&quot; &quot;Genus&quot;</code></pre>
+<p>Check if there are any empty OTUs:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(<span class="kw">taxa_sums</span>(schmidt)<span class="op">==</span><span class="dv">0</span>)</code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<p>We wish to perform a neutral model analysis with the mouth as the source community and the lung as the target community. Our example data meet the requirements for this type of analysis:</p>
+<ul>
+<li>The samples in <code>schmidt</code> are for only the source and target communities.</li>
+<li>There are multiple samples for each community.</li>
+<li>All samples have the same number of sequences.</li>
+<li>There are no empty OTUs (taxa).</li>
+</ul>
+<p>The first step is to make separate OTU tables for source and target communities. The function <code>veganotu</code> included in this package simplifies this task. The variable <code>Site</code> in the sample data table in <code>schmidt</code> specifies which samples are in each community.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">source.com &lt;-<span class="st"> </span><span class="kw">veganotu</span>(<span class="kw">subset_samples</span>(schmidt, Site<span class="op">==</span><span class="st">&quot;Mouth&quot;</span>))
+target.com &lt;-<span class="st"> </span><span class="kw">veganotu</span>(<span class="kw">subset_samples</span>(schmidt, Site<span class="op">==</span><span class="st">&quot;Lung&quot;</span>))</code></pre></div>
+<p>*Do not remove empty OTUs after sub-setting!**</p>
+<p>To run the neutral model analysis:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test &lt;-<span class="st"> </span><span class="kw">neutral_model</span>(<span class="dt">physeq=</span>schmidt, <span class="dt">source.otu=</span>source.com,
+                      <span class="dt">target.otu=</span>target.com, <span class="dt">add_taxa=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>Since <code>schmidt</code> includes taxonomic assignments (a <code>tax_table</code>), we added taxonomy to the output with the argument <code>add_taxa=TRUE</code>.</p>
+<p>Warnings may be issued if confidence intervals about the plot curve are not fitted with full precision, and/or if there are ties in calculating the correlation between observed and fitted values. These are usually of no consequence. Serious problems will be evident when plotting the result.</p>
+<p>The arguments need not be named if they are given in order. For example, the following would also work:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test &lt;-<span class="st"> </span><span class="kw">neutral_model</span>(schmidt, source.com, target.com, <span class="dt">add_taxa=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>As long as the target and source matrices meet requirements, you do not need to include a <code>phyloseq</code> object, but in that case it is not possible to add taxonomy to the output. For example, this would also work:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test &lt;-<span class="st"> </span><span class="kw">neutral_model</span>(<span class="ot">NULL</span>, source.com, target.com)</code></pre></div>
+<p>The results can be plotted thus:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(test)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The solid line is the predicted relationship between source abundance and target frequency. The dashed lines give the 95% confidence interval. The gray symbols represent OTUs falling within the confidence interval - i.e. those that are neutrally distributed. The green symbols represent OTUs that occur in the target community more frequently than expected (are selected for). The red symbols represent OTUs that occur in the target community less frequently than expected (are selected against).</p>
+<p>The plot function accepts several arguments common to R’s plot function (main, xlim, ylim, xlab, ylab) allowing some customization of the plot. For example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(test, <span class="dt">xlab=</span><span class="st">&quot;Relative Abundance in Mouth&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Detected Frequency in Lung&quot;</span>,
+     <span class="dt">main=</span><span class="st">&quot;My NCM Plot&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>By entering the name of the NCM object,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test</code></pre></div>
+<pre><code>## Class:  NCM 
+## Ntm =  23.25 
+## Mean Nt =  500 
+## m =  0.0465</code></pre>
+<p>we get <code>Ntm</code>, the parameter fitted to the model. The math for the model requires that all samples have at least approximately the same number of sequences. In this case, all samples have 500 sequences, and <code>Nt</code> = 500. This makes <code>m</code> = 0.0465, the probability that when an individual in a sample in the target community dies it is replaced by an individual from the source community. At least this is the interpretation given in the context of island bio-geography for which the neutral community model was originally developed, i.e. for counts of trees or birds on islands. It is, however, rather meaningless for sequence data.</p>
+<p>The null hypothesis that the model does not fit the data can be tested with the function <code>pval_NeutralModel</code> which calculates a <code>p</code> value by permutation, thus:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p.val &lt;-<span class="st"> </span><span class="kw">pval_NeutralModel</span>(test)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p.val</code></pre></div>
+<pre><code>## Class:  NCMpval 
+## Fit =  
+## Fit std error =  
+## p-value =  1e-05</code></pre>
+<p>The null hypothesis is rejected if <code>p.val</code> is less than a limit set by the investigator, typically 0.05. By default, a plot is made of the distribution of the test statistic with the location of the observed statistic denoted by a vertical red line.</p>
+<p>Other statistics may be retrieved with the summary function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(test)</code></pre></div>
+<pre><code>##                             Counts
+## OTUsInTarget                   282
+## OTUsInSource                   341
+## SharedOTUs                     148
+## NeutralOTUs                    122
+## OTUsSelctedAgainst              12
+## OTUsSelctedFor                  14
+## SeqsInTarget                 14500
+## SeqsInSource                 28000
+## SharedSeqsInSource           27598
+## SharedSeqsInTarget           13988
+## NeutralSeqsInSource          16809
+## NeutralSeqsInTarget           8005
+## SelectedForSeqsInSource       3351
+## SelectedForSeqsInTarget       2700
+## SelectedAgainstSeqsInSource   7438
+## SelectedAgainstSeqsInTarget   3283
+## 
+## 
+##                         Proportions
+## SharedAbundance          0.55206897
+## UniqueAbundanceToTarget  0.03531034
+## UniqueAbundanceToSource  0.98564286
+## NeutralAbundance         0.55206897
+## ForAbundance             0.18620690
+## AgainstAbundance         0.22641379
+## SourceAnalyzed           0.98564286
+## SourceNeutral            0.60032143
+## SourceSelectedFor        0.11967857
+## SourceSelectedAgainst    0.26564286</code></pre>
+<p>The object <code>test</code> is a list of 8 items. You may examine the structure of <code>test</code> with the <code>str</code> function. Statistics on the OTUs that are neutral, selected for, and selected against can be accessed by entering <code>test\$neutral_matrix, test\$for_matrix</code>, and <code>test\$against_matrix</code>, respectively. These can be sub-set as any R data frame, so if we want the classification of the OTUs selected for, we can enter:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test<span class="op">$</span>for_matrix[,<span class="dv">8</span><span class="op">:</span><span class="dv">12</span>]</code></pre></div>
+<pre><code>##                 Phylum                 Class             Order
+## OTU0005     Firmicutes               Bacilli   Lactobacillales
+## OTU0019 Actinobacteria        Actinobacteria   Actinomycetales
+## OTU0100  Bacteroidetes           Bacteroidia     Bacteroidales
+## OTU0070     Firmicutes            Clostridia     Clostridiales
+## OTU0047 Proteobacteria Epsilonproteobacteria Campylobacterales
+## OTU0029     Firmicutes         Negativicutes   Selenomonadales
+## OTU0137     Firmicutes            Clostridia     Clostridiales
+## OTU0056 Proteobacteria    Betaproteobacteria      Neisseriales
+## OTU0123   unclassified          unclassified      unclassified
+## OTU0072   unclassified          unclassified      unclassified
+## OTU0109     Firmicutes            Clostridia     Clostridiales
+## OTU0185     Firmicutes            Clostridia     Clostridiales
+## OTU0037 Actinobacteria        Actinobacteria Bifidobacteriales
+## OTU0422   Spirochaetes          Spirochaetes    Spirochaetales
+##                                    Family                                Genus
+## OTU0005                  Streptococcaceae                        Streptococcus
+## OTU0019                  Actinomycetaceae                          Actinomyces
+## OTU0100                    Prevotellaceae                           Prevotella
+## OTU0070                   Lachnospiraceae                            Catonella
+## OTU0047                Campylobacteraceae                        Campylobacter
+## OTU0029                   Veillonellaceae                          Selenomonas
+## OTU0137 Clostridiales_Incertae_Sedis_XIII                        Mogibacterium
+## OTU0056                     Neisseriaceae                         unclassified
+## OTU0123                      unclassified                         unclassified
+## OTU0072                      unclassified                         unclassified
+## OTU0109             Peptostreptococcaceae Peptostreptococcaceae_incertae_sedis
+## OTU0185                   Lachnospiraceae                         unclassified
+## OTU0037                Bifidobacteriaceae                         unclassified
+## OTU0422                   Spirochaetaceae                            Treponema</code></pre>
+<p>The column indices are dependent on the number of taxonomic ranks present, but will always begin with column 7. Ranks can also be selected by name as in the following command:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test<span class="op">$</span>for_matrix[ , <span class="kw">c</span>(<span class="st">&quot;Phylum&quot;</span>, <span class="st">&quot;Genus&quot;</span>)]</code></pre></div>
+<pre><code>##                 Phylum                                Genus
+## OTU0005     Firmicutes                        Streptococcus
+## OTU0019 Actinobacteria                          Actinomyces
+## OTU0100  Bacteroidetes                           Prevotella
+## OTU0070     Firmicutes                            Catonella
+## OTU0047 Proteobacteria                        Campylobacter
+## OTU0029     Firmicutes                          Selenomonas
+## OTU0137     Firmicutes                        Mogibacterium
+## OTU0056 Proteobacteria                         unclassified
+## OTU0123   unclassified                         unclassified
+## OTU0072   unclassified                         unclassified
+## OTU0109     Firmicutes Peptostreptococcaceae_incertae_sedis
+## OTU0185     Firmicutes                         unclassified
+## OTU0037 Actinobacteria                         unclassified
+## OTU0422   Spirochaetes                            Treponema</code></pre>
+</div>
+<div id="analyze-rplb-data" class="section level1">
+<h1>Analyze rplB Data</h1>
+<p>The data set <code>rplb</code> is from an experiment with IPAA patients and is also furnished as a <code>phyloseq</code> object. IPAA (ileal pouch-anal anastomosis) is a surgical procedure in which a pouch is formed from the distal portion of the ileum to restore function in colectomy patients. Some IPAA patients developed pouchitis at some time point post surgery. Other patients remained healthy throughout the time course of the experiment. Colon samples from healthy patients were also included, and could conceivably be a source community for the pouchitis patients.</p>
+<p>Prior to fitting to a neutral model, the data obviously needs to be sub-set in some meaningful manner to include only source and target communities. Let us consider the colon samples as the source community and the samples from IPAA patients who developed pouchitis as the target community. Because the disease state may also have an effect, we will remove samples post diagnosis with pouchitis. Begin by examining the variables in the sample data table and their values.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(rplb)
+<span class="kw">sample_variables</span>(rplb)</code></pre></div>
+<pre><code>## [1] &quot;Patient&quot;   &quot;Condition&quot; &quot;Site&quot;      &quot;Time&quot;      &quot;Group&quot;     &quot;Diagnosed&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(<span class="kw">sample_data</span>(rplb)[,<span class="st">&quot;Diagnosed&quot;</span>])</code></pre></div>
+<pre><code>##        Diagnosed
+## A1            No
+## P202_3       Yes</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(<span class="kw">sample_data</span>(rplb)[,<span class="st">&quot;Group&quot;</span>])</code></pre></div>
+<pre><code>##                 Group
+## A1      Colon.Healthy
+## P202_1 IPAA.Pouchitis
+## P209_1   IPAA.Healthy</code></pre>
+<p>Remove samples post diagnosis.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp &lt;-<span class="st"> </span><span class="kw">subset_samples</span>(rplb, Diagnosed<span class="op">==</span><span class="st">&quot;No&quot;</span>)</code></pre></div>
+<p>Remove samples for patients that did not develop pouchitis.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp &lt;-<span class="st"> </span><span class="kw">subset_samples</span>(temp, Group<span class="op">!=</span><span class="st">&quot;IPAA.Healthy&quot;</span>)
+<span class="kw">table</span>(<span class="kw">sample_data</span>(temp)[,<span class="st">&quot;Site&quot;</span>])</code></pre></div>
+<pre><code>## 
+## Colon  IPAA 
+##    45    16</code></pre>
+<p>We are left with 45 samples from the colon of healthy patients and 16 samples from IPAA patients that developed pouchitis.</p>
+<p>The neutral model math is based on sample sizes being at least close to equal. If a there are few samples with low abundances, they can be removed from the analysis. Another option is to sub-sample to equal numbers. We might also consider removing rare OTUs, or at least universal singletons. For this example, we will remove OTUs with fewer than 10 reads.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp &lt;-<span class="st"> </span><span class="kw">prune_taxa</span>(<span class="kw">taxa_sums</span>(temp)<span class="op">&gt;</span><span class="dv">9</span>, temp)
+<span class="kw">range</span>(<span class="kw">sample_sums</span>(temp))</code></pre></div>
+<pre><code>## [1] 1415 1498</code></pre>
+<p>Sample sizes are close enough that sub-sampling is not necessary, but to demonstrate:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">123</span>) <span class="co"># To make reproducible.</span>
+temp &lt;-<span class="st"> </span><span class="kw">rarefy_even_depth</span>(temp, <span class="dt">rngseed=</span><span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## `set.seed(TRUE)` was used to initialize repeatable random subsampling.</code></pre>
+<pre><code>## Please record this for your records so others can reproduce.</code></pre>
+<pre><code>## Try `set.seed(TRUE); .Random.seed` for the full vector</code></pre>
+<pre><code>## ...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">range</span>(<span class="kw">sample_sums</span>(temp))</code></pre></div>
+<pre><code>## [1] 1415 1415</code></pre>
+<p>Our data are now sub-set. The last step before running the <code>neutral_model</code> function is to create separate OTU tables for the source and target communities. <strong>Do not remove empty OTUs after sub-setting!</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">source.com &lt;-<span class="st"> </span><span class="kw">veganotu</span>(<span class="kw">subset_samples</span>(temp, Site<span class="op">==</span><span class="st">&quot;Colon&quot;</span>))
+target.com &lt;-<span class="st"> </span><span class="kw">veganotu</span>(<span class="kw">subset_samples</span>(temp, Site<span class="op">==</span><span class="st">&quot;IPAA&quot;</span>))</code></pre></div>
+<p>Run the <code>neutral_model</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rslt &lt;-<span class="st"> </span><span class="kw">neutral_model</span>(temp, source.com, target.com)
+rslt</code></pre></div>
+<pre><code>## Class:  NCM 
+## Ntm =  3.15 
+## Mean Nt =  1415 
+## m =  0.002226148</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(rslt)</code></pre></div>
+<pre><code>##                             Counts
+## OTUsInTarget                    63
+## OTUsInSource                   142
+## SharedOTUs                      58
+## NeutralOTUs                     32
+## OTUsSelctedAgainst               4
+## OTUsSelctedFor                  22
+## SeqsInTarget                 22640
+## SeqsInSource                 63675
+## SharedSeqsInSource           52350
+## SharedSeqsInTarget           22536
+## NeutralSeqsInSource          35963
+## NeutralSeqsInTarget           8820
+## SelectedForSeqsInSource       6334
+## SelectedForSeqsInTarget      13297
+## SelectedAgainstSeqsInSource  10053
+## SelectedAgainstSeqsInTarget    419
+## 
+## 
+##                         Proportions
+## SharedAbundance          0.39094523
+## UniqueAbundanceToTarget  0.00459364
+## UniqueAbundanceToSource  0.82214370
+## NeutralAbundance         0.38957597
+## ForAbundance             0.58732332
+## AgainstAbundance         0.01850707
+## SourceAnalyzed           0.82214370
+## SourceNeutral            0.56478995
+## SourceSelectedFor        0.09947389
+## SourceSelectedAgainst    0.15787986</code></pre>
+<p>Plot the results:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(rslt, <span class="dt">main=</span><span class="st">&quot;rplB Counts&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Relative Abundance in Colon&quot;</span>,
+     <span class="dt">ylab=</span><span class="st">&quot;Detection Frequency in Pouch&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>And calculate a <code>p</code> value:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p.val &lt;-<span class="st"> </span><span class="kw">pval_NeutralModel</span>(rslt, <span class="dt">n.iter=</span><span class="dv">999</span>, <span class="dt">plot=</span><span class="ot">FALSE</span>)
+p.val</code></pre></div>
+<pre><code>## Class:  NCMpval 
+## Fit =  
+## Fit std error =  
+## p-value =  0.003</code></pre>
+</div>
+<div id="references" class="section level1">
+<h1>References`</h1>
+<p><strong>Gentleman R.C., Carey V.J., Bates D.M., Bolstad B., Dettling M., Dudoit S., Ellis B., Gautier L., Ge Y., Gentry J., Hornik K., Hothorn T., Huber W., Iacus S., Irizarry R., Leisch F., Li C., Maechler M., Rossini A.J., Sawitzki G., Smith C., Smyth G., Tierney L., Yang J.Y. and Zhang J.</strong> (2004) Bioconductor: open software development for computational biology and bioinformatics. Genome Biol. 5(10): R80.</p>
+<p><strong>McMurdie, P. J. and S. Holmes.</strong> (2013) phyloseq: An R package for reproducible interactive analysis and graphics of microbiome census data. PLos One 8(4)e61217. <a href="http://dx.plos.org/10.1371/journal.pone.0061217" class="uri">http://dx.plos.org/10.1371/journal.pone.0061217</a></p>
+<p><strong>Morris, A., J. M. Beck, P. D. Schloss, T. B. Campbell, K. Crothers, J. L. Curtis, S. C. Flores, A. P. Fontenot, E. Ghedin, L. Huang, K. Jablonski, E. Kleerup, S. V. Lynch, E. Sodergren, H. Twigg, V. B. Young, C. M. Bassis, A. Venkataraman, T. M. Schmidt, G. M. Weinstock, and H. I. V. M. P. Lung.</strong> (2013) Comparison of the respiratory microbiome in healthy nonsmokers and smokers. American Journal of Respiratory and Critical Care Medicine 187:1067-1075.</p>
+<p><strong>Venkataraman, A., C. M. Bassis, J. M. Beck, V. B. Young, J. L. Curtis, G. B. Huffnagle, and T. M. Schmidt.</strong> 2015. Application of a neutral community model to assess structuring of the human lung microbiome. MBio 6:e02284-14.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
